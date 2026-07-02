@@ -1,0 +1,67 @@
+name: Check for aube updates
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Specific aube version to update to, with or without leading v"
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update package
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_VERSION: ${{ inputs.version }}
+        run: |
+          if [ -n "$TARGET_VERSION" ]; then
+            ./scripts/update.sh --version "$TARGET_VERSION"
+          else
+            ./scripts/update.sh
+          fi
+
+      - name: Read package version
+        id: package
+        run: |
+          version="$(sed -n 's/.*version = "\([^"]*\)";.*/\1/p' package.nix | head -n1)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Create pull request
+        id: create-pr
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update aube to ${{ steps.package.outputs.version }}"
+          title: "chore: update aube to ${{ steps.package.outputs.version }}"
+          body: |
+            Updates aube to `${{ steps.package.outputs.version }}`.
+
+            The update workflow refreshed the package version and release asset hashes, then built the current Linux package.
+          branch: update-aube-${{ steps.package.outputs.version }}
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+
+      - name: Enable auto-merge
+        if: steps.create-pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.create-pr.outputs.pull-request-number }}
+        run: gh pr merge "$PR_NUMBER" --auto --squash --delete-branch
