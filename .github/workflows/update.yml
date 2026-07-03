@@ -42,6 +42,14 @@ jobs:
           version="$(sed -n 's/.*version = "\([^"]*\)";.*/\1/p' package.nix | head -n1)"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
+      - name: Build aube
+        run: nix build .#aube --print-build-logs
+
+      - name: Check binary
+        run: |
+          ./result/bin/aube --version
+          ./result/bin/aube --help >/dev/null
+
       - name: Create pull request
         id: create-pr
         uses: peter-evans/create-pull-request@v8
