@@ -3,27 +3,25 @@
   stdenvNoCC,
   fetchurl,
   installShellFiles,
-  makeWrapper,
-  usage,
 }: let
   releases = {
     aarch64-darwin = {
       target = "aarch64-apple-darwin";
-      hash = "sha256-Y1cgpFEls8yK+yl5yaGO1ITe7PyRk46dlB4nj1Keh+E=";
+      hash = "sha256-Tl1+e6tlw8T1pNsAItb+VRblGx3bvfYEtTfUpzqmgv0=";
     };
     aarch64-linux = {
       target = "aarch64-unknown-linux-musl";
-      hash = "sha256-Wi5a+wJ1mrrX9W4IPH4vorCuhB82acvPWt1CylhGgh8=";
+      hash = "sha256-unyK8VmY/wjMI6JTaszt0v/XJ7fIqH4BnKic7V2YbJ4=";
     };
     x86_64-linux = {
       target = "x86_64-unknown-linux-musl";
-      hash = "sha256-eVXd7hY/ZOnkNIIAu3d8D4P6WWQQ3nXh6l3UPUs/5/E=";
+      hash = "sha256-96YrsiC8OjeC7S5vbJ7ZQ/sZJCWLTQUo5j2TBlC0Z5c=";
     };
   };
 in
   stdenvNoCC.mkDerivation rec {
     pname = "aube";
-    version = "1.41.0";
+    version = "2.1.0";
 
     src = let
       system = stdenvNoCC.hostPlatform.system;
@@ -36,10 +34,7 @@ in
         inherit (release) hash;
       };
 
-    nativeBuildInputs = [
-      installShellFiles
-      makeWrapper
-    ];
+    nativeBuildInputs = [installShellFiles];
 
     sourceRoot = ".";
 
@@ -50,18 +45,9 @@ in
       install -Dm755 aubr $out/bin/aubr
       install -Dm755 aubx $out/bin/aubx
 
-      for bin in aube aubr aubx; do
-        wrapProgram $out/bin/$bin \
-          --prefix PATH : "${lib.makeBinPath [usage]}"
-      done
-
       $out/bin/aube completion bash > aube.bash
       $out/bin/aube completion fish > aube.fish
       $out/bin/aube completion zsh > _aube
-
-      substituteInPlace aube.bash aube.fish _aube \
-        --replace-fail '-p usage' '-p ${lib.getExe usage}' \
-        --replace-fail 'usage complete-word' '${lib.getExe usage} complete-word'
 
       installShellCompletion --cmd aube \
         --bash aube.bash \
