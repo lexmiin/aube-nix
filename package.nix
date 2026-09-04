@@ -7,21 +7,21 @@
   releases = {
     aarch64-darwin = {
       target = "aarch64-apple-darwin";
-      hash = "sha256-qj9ujjGcjZySOT55fNVXYinqzAdA6M8rNNTGW7HmFwg=";
+      hash = "sha256-uUweWhtqgEn3hemcjAOx+SLCXOPvqOwxwMj/hCN+s+Q=";
     };
     aarch64-linux = {
       target = "aarch64-unknown-linux-musl";
-      hash = "sha256-B61ckdDH67jpCSiDzkkQKE3DyQnTqj7zwAQcjSX6y3s=";
+      hash = "sha256-YZFWdg83J9Oa0hV6bvyrKPFhJP92kmTErhuhTWyUjW8=";
     };
     x86_64-linux = {
       target = "x86_64-unknown-linux-musl";
-      hash = "sha256-/4ZLM0jYqtahtQ/kfiI01TUneX6A8ZBTPARW72JV1uQ=";
+      hash = "sha256-KiQepiKpuG8toC4zlqE4xD4y1Z2/UfK1th1NN6uf5mc=";
     };
   };
 in
   stdenvNoCC.mkDerivation rec {
     pname = "aube";
-    version = "2.2.4";
+    version = "2.2.9";
 
     src = let
       system = stdenvNoCC.hostPlatform.system;
