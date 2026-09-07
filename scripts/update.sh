@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-readonly GITHUB_REPO="jdx/aube"
+readonly GITHUB_REPO="aubepkg/aube"
 readonly PACKAGE_FILE="package.nix"
 
 targets=(

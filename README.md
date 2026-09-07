@@ -1,6 +1,6 @@
 # aube-nix
 
-Nix flake for [aube](https://github.com/jdx/aube), packaged from upstream release binaries.
+Nix flake for [aube](https://github.com/aubepkg/aube), packaged from upstream release binaries.
 
 ## Usage
 

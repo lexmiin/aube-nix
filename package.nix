@@ -30,7 +30,7 @@ in
         or (throw "aube-nix: unsupported system ${system}");
     in
       fetchurl {
-        url = "https://github.com/jdx/aube/releases/download/v${version}/aube-v${version}-${release.target}.tar.gz";
+        url = "https://github.com/aubepkg/aube/releases/download/v${version}/aube-v${version}-${release.target}.tar.gz";
         inherit (release) hash;
       };
 
@@ -59,7 +59,7 @@ in
 
     meta = {
       description = "Fast Node.js package manager";
-      homepage = "https://github.com/jdx/aube";
+      homepage = "https://github.com/aubepkg/aube";
       license = lib.licenses.mit;
       mainProgram = "aube";
       platforms = builtins.attrNames releases;
